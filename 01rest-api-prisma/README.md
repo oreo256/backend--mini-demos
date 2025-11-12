@@ -14,7 +14,7 @@ RDB と REST API の連携の仕組みを理解することを目的としてい
 - Express
     
 - Prisma (ORM)
-    ****
+
 - PostgreSQL
     
 - ts-node-dev（ホットリロード）
