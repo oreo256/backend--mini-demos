@@ -92,7 +92,6 @@ docker compose exec db psql -U postgres -d <db_name>
 
 psql 内での確認：
 ```
-\dn
 \dt
 SELECT * FROM "User";
 ```
