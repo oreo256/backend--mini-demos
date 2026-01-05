@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Chat</title>
+    <style>
+      body { font-family: system-ui, -apple-system, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 12px; }
+      h1 { font-size: 20px; }
+      #status { color: #666; margin: 8px 0 16px; }
+      #messages { list-style: none; padding: 0; margin: 0; }
+      #messages li { padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; margin: 8px 0; }
+      .meta { font-size: 12px; color: #777; margin-top: 4px; }
+      form { display: flex; gap: 8px; margin-top: 12px; }
+      input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+      button { padding: 10px 14px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>chat messages</h1>
+    <div id="status">connecting...</div>
+
+    <ul id="messages"></ul>
+
+    <form id="form">
+      <input id="input" autocomplete="off" placeholder="メッセージを入力" />
+      <button type="submit">Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const statusEl = document.getElementById("status");
+      const messagesEl = document.getElementById("messages");
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+
+      const socket = io();
+
+      socket.on("connect", () => {
+        statusEl.textContent = `connected: ${socket.id}`;
+      });
+
+      socket.on("disconnect", () => {
+        statusEl.textContent = "disconnected";
+      });
+
+      socket.on("chat message", (payload) => {
+        const li = document.createElement("li");
+        li.textContent = payload.text;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = `from: ${payload.id} / at: ${new Date(payload.at).toLocaleTimeString()}`;
+
+        li.appendChild(meta);
+        messagesEl.appendChild(li);
+
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const text = input.value.trim();
+        if (!text) return;
+
+        socket.emit("chat message", text);
+        input.value = "";
+      });
+    </script>
+</body>
+</html>
