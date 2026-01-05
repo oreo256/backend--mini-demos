@@ -4,9 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket.IO Chat</title>
+    <style>
+      body { font-family: system-ui, -apple-system, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 12px; }
+      h1 { font-size: 20px; }
+      #status { color: #666; margin-top: 12px; }
+    </style>
 </head>
 <body>
     <h1>Static page is served!</h1>
-    <p>Next: add Socket.IO connection</p>
+    <div id="status">connecting...</div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const statusEl = document.getElementById("status");
+
+      // サーバへ接続開始
+      const socket = io();
+
+      socket.on("connect", () => {
+        statusEl.textContent = `connected: ${socket.id}`;
+      });
+
+      socket.on("disconnect", () => {
+        statusEl.textContent = "disconnected";
+      });
+    </script>
 </body>
 </html>
+
